@@ -1,15 +1,17 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.28)
 
-project(my-project
-        VERSION 0.0.0
-        DESCRIPTION "My best project"
-        LANGUAGES C CXX
-)
+project(page_cache VERSION 0.1.0)
 
-set(CMAKE_C_STANDARD 23)
-set(CMAKE_C_STANDARD_REQUIRED True)
+option(PAGE_CACHE_DEVELOPER "Enable ${PROJECT_NAME} developer mode" OFF)
+option(PAGE_CACHE_BENCHMARK "Enable ${PROJECT_NAME} benchmark module" OFF)
 
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-add_subdirectory(app)
+include(cmake/CompileOptions.cmake)
+
+add_subdirectory(source)
+
+if(PAGE_CACHE_DEVELOPER)
+    find_package(GTest REQUIRED)
+    add_subdirectory(test)
+endif()
