@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <vector>
 
-#define BLOCK_SIZE 4
+#define BLOCK_SIZE 4096
 
 namespace page_cache {
 

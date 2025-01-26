@@ -43,7 +43,7 @@ int Main() {
         return 1;
     }
 
-    const char* write_data = "Hello, this is a test write!\n";
+    const char* write_data = "Hello, this is a test write!";
     size_t write_size = std::strlen(write_data);
 
     ssize_t bytes_written = lab2_write(fd, write_data, write_size);

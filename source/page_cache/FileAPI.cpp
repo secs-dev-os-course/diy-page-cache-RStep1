@@ -7,14 +7,14 @@
 #include "FIFOCache.hpp"
 
 #define CACHE_SIZE 256
+#define FILE_PERMISSIONS 0644
 
 static page_cache::FIFOCache cache(CACHE_SIZE);
 
 namespace page_cache {
 
 int lab2_open(const char *path) {
-    // return open(path, O_RDWR | O_DIRECT | O_SYNC);
-    return open(path, O_RDWR | O_CREAT, 0644);
+    return open(path, O_RDWR | O_CREAT | O_DIRECT, FILE_PERMISSIONS);
 }
 
 int lab2_close(int fd) {
@@ -44,7 +44,7 @@ ssize_t lab2_read(int fd, void* buf, size_t count) {
         bytes_read += readable_size;
     }
 
-    lseek(fd, offset, SEEK_CUR);
+    lseek(fd, bytes_read, SEEK_CUR);
     return bytes_read;
 }
 
