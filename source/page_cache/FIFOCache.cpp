@@ -47,7 +47,7 @@ void FIFOCache::sync() {
         if (block.dirty) {
             size_t write_size = block.valid_size;
             if (write_size > 0) {
-                if (pwrite(block.fd, block.data.data(), write_size, block.offset) == -1) {
+                if (pwrite(block.fd, block.data.data(), BLOCK_SIZE, block.offset) == -1) {
                     perror("pwrite failed");
                 }
             }
@@ -55,7 +55,6 @@ void FIFOCache::sync() {
         }
     }
 }
-
 
 void FIFOCache::Evict() {
     if (fifoQueue.empty()) {
