@@ -20,6 +20,7 @@ struct CacheBlock {
     off_t offset;
     std::vector<uint8_t> data;
     bool dirty;
+    size_t valid_size;
 };
 
 class FIFOCache {
