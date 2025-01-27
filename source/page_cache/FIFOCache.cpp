@@ -33,6 +33,7 @@ CacheBlock* FIFOCache::getBlock(int fd, off_t offset) {
     return &cache[block_offset];
 }
 
+
 void FIFOCache::writeBlock(int fd, off_t offset, const uint8_t* buf, size_t writable_size) {
     CacheBlock* block = getBlock(fd, offset);
     size_t start = offset % BLOCK_SIZE;
@@ -40,6 +41,10 @@ void FIFOCache::writeBlock(int fd, off_t offset, const uint8_t* buf, size_t writ
     std::memcpy(block->data.data() + start, buf, writable_size);
     block->valid_size = std::max(block->valid_size, start + writable_size);
     block->dirty = true;
+
+    if (block->valid_size < BLOCK_SIZE) {
+        std::memset(block->data.data() + block->valid_size, 0, BLOCK_SIZE - block->valid_size);
+    }
 }
 
 void FIFOCache::sync() {
@@ -47,6 +52,9 @@ void FIFOCache::sync() {
         if (block.dirty) {
             size_t write_size = block.valid_size;
             if (write_size > 0) {
+                if (block.valid_size < BLOCK_SIZE) {
+                    std::memset(block.data.data() + block.valid_size, 0, BLOCK_SIZE - block.valid_size);
+                }
                 if (pwrite(block.fd, block.data.data(), BLOCK_SIZE, block.offset) == -1) {
                     perror("pwrite failed");
                 }
@@ -70,6 +78,7 @@ void FIFOCache::Evict() {
     }
     cache.erase(evict_offset);
 }
+
 
 off_t FIFOCache::CalculateBlockOffset(off_t offset) {
     return (offset / BLOCK_SIZE) * BLOCK_SIZE;

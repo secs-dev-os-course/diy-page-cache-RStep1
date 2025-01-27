@@ -12,7 +12,8 @@ set_target_properties(page_cache PROPERTIES
 
 add_executable(app 
     user/app/Main.cpp 
-    user/Linreg.cpp
+    user/SearchName.cpp
+    user/util/FileManager.cpp
 )
 
 target_link_libraries(app PRIVATE page_cache)

@@ -2,6 +2,8 @@
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 #include "FIFOCache.hpp"
@@ -11,10 +13,34 @@
 
 static page_cache::FIFOCache cache(CACHE_SIZE);
 
+static int open_direct(const char* path, char** aligned_buffer, int flags) {
+    int fd = open(path, flags | O_DIRECT);
+    if (fd == -1) {
+        perror("Error opening file!");
+        return -1;
+    }
+    if (posix_memalign((void**)aligned_buffer, BLOCK_SIZE, BLOCK_SIZE) != 0) {
+        perror("Can not allocate buffer");
+        close(fd);
+        return -1;
+    }
+    return fd;
+}
+
 namespace page_cache {
 
+// int lab2_open(const char *path) {
+//     return open(path, O_RDWR | O_CREAT | O_DIRECT, FILE_PERMISSIONS);
+// }
+
 int lab2_open(const char *path) {
-    return open(path, O_RDWR | O_CREAT | O_DIRECT, FILE_PERMISSIONS);
+    char* aligned_buffer = nullptr;
+    int fd = open_direct(path, &aligned_buffer, O_RDWR | O_CREAT);
+    if (fd == -1) {
+        return -1;
+    }
+
+    return fd;
 }
 
 int lab2_close(int fd) {

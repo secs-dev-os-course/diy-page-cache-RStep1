@@ -2,6 +2,9 @@
 #include <dlfcn.h>
 #include <cstring>
 #include <unistd.h>
+#include <chrono>
+
+#include "../SearchName.hpp"
 
 namespace user::app {
 
@@ -82,9 +85,13 @@ int Main() {
         std::cout << "Successfully closed file.\n";
     }
 
+    auto start = std::chrono::high_resolution_clock::now();
+    SearchFileByName(1300, "Main.cpp");
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    std::cout << "processing time: " << duration.count() << " microseconds\n";
     dlclose(handler);
 
-    std::cout << "Hello from user app\n";
     return 0;
 }
 
